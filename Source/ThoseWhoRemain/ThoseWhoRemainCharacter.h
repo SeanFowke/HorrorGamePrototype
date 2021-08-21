@@ -13,15 +13,18 @@ class AThoseWhoRemainCharacter : public ACharacter
 {
 	GENERATED_BODY()
 
-	/** Pawn mesh: 1st person view (arms; seen only by self) */
-	//UPROPERTY(VisibleDefaultsOnly, Category=Mesh)
-	//class USkeletalMeshComponent* Mesh1P;
+		/** Pawn mesh: 1st person view (arms; seen only by self) */
+		//UPROPERTY(VisibleDefaultsOnly, Category=Mesh)
+		//class USkeletalMeshComponent* Mesh1P;
 
-	/** Gun mesh: 1st person view (seen only by self) */
-	/*UPROPERTY(VisibleDefaultsOnly, Category = Mesh)
-	class USkeletalMeshComponent* FP_Gun;*/
+		/** Gun mesh: 1st person view (seen only by self) */
+		/*UPROPERTY(VisibleDefaultsOnly, Category = Mesh)
+		class USkeletalMeshComponent* FP_Gun;*/
 
-	/** Location on gun mesh where projectiles should spawn. */
+		/** Location on gun mesh where projectiles should spawn. */
+	UPROPERTY(EditAnywhere, Category = HiddenObject)
+	class UHiddenObjectComponent* hiddenObjectComp;
+
 	UPROPERTY(VisibleDefaultsOnly, Category = Mesh)
 	class USceneComponent* FP_MuzzleLocation;
 

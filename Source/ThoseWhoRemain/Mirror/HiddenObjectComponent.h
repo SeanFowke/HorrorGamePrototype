@@ -24,5 +24,6 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-		
+	// make sure you 
+	void Setup(class USkeletalMeshComponent* mesh_, AActor* actor_);
 };

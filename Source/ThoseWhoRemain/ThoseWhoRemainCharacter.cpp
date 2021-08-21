@@ -11,6 +11,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "MotionControllerComponent.h"
 #include "XRMotionControllerBase.h" // for FXRMotionControllerBase::RightHandSourceId
+#include "Mirror/HiddenObjectComponent.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogFPChar, Warning, All);
 
@@ -31,6 +32,9 @@ AThoseWhoRemainCharacter::AThoseWhoRemainCharacter()
 	FirstPersonCameraComponent->SetupAttachment(GetCapsuleComponent());
 	FirstPersonCameraComponent->RelativeLocation = FVector(-39.56f, 1.75f, 64.f); // Position the camera
 	FirstPersonCameraComponent->bUsePawnControlRotation = true;
+
+	// create a hidden object component
+
 
 	// Create a mesh component that will be used when being viewed from a '1st person' view (when controlling this pawn)
 	/*Mesh1P = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("CharacterMesh1P"));
@@ -88,21 +92,6 @@ void AThoseWhoRemainCharacter::BeginPlay()
 {
 	// Call the base class  
 	Super::BeginPlay();
-
-	//Attach gun mesh component to Skeleton, doing it here because the skeleton is not yet created in the constructor
-	//FP_Gun->AttachToComponent(Mesh1P, FAttachmentTransformRules(EAttachmentRule::SnapToTarget, true), TEXT("GripPoint"));
-
-	// Show or hide the two versions of the gun based on whether or not we're using motion controllers.
-	//if (bUsingMotionControllers)
-	//{
-	//	VR_Gun->SetHiddenInGame(false, true);
-	//	//Mesh1P->SetHiddenInGame(true, true);
-	//}
-	//else
-	//{
-	//	VR_Gun->SetHiddenInGame(true, true);
-	//	//Mesh1P->SetHiddenInGame(false, true);
-	//}
 }
 
 //////////////////////////////////////////////////////////////////////////
