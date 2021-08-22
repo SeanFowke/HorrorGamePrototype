@@ -45,7 +45,6 @@ void UHiddenObjectComponent::Setup(USkeletalMeshComponent* mesh_, AActor* actor_
 	if (actor_)
 	{
 		actor_->SetOwner(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
-		actor_->GetOwner();
 	}
 
 }

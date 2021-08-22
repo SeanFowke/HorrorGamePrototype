@@ -12,6 +12,9 @@
 #include "MotionControllerComponent.h"
 #include "XRMotionControllerBase.h" // for FXRMotionControllerBase::RightHandSourceId
 #include "Mirror/HiddenObjectComponent.h"
+#include "Components/StaticMeshComponent.h"
+#include "Components/SceneCaptureComponent2D.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogFPChar, Warning, All);
 
@@ -34,7 +37,12 @@ AThoseWhoRemainCharacter::AThoseWhoRemainCharacter()
 	FirstPersonCameraComponent->bUsePawnControlRotation = true;
 
 	// create a hidden object component
-
+	sceneCapture = CreateDefaultSubobject<USceneCaptureComponent2D>(TEXT("SceneCapture2D"));
+	sceneCapture->SetupAttachment(GetCapsuleComponent());
+	sceneCapture->RelativeLocation = FVector(-39.56f, 1.75f, 64.f);
+	
+	mirrorMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MirrorMesh"));
+	mirrorMesh->SetupAttachment(GetCapsuleComponent());
 
 	// Create a mesh component that will be used when being viewed from a '1st person' view (when controlling this pawn)
 	/*Mesh1P = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("CharacterMesh1P"));
@@ -106,9 +114,13 @@ void AThoseWhoRemainCharacter::SetupPlayerInputComponent(class UInputComponent* 
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
 	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
 
-	// Bind fire event
-	//PlayerInputComponent->BindAction("Fire", IE_Pressed, this, &AThoseWhoRemainCharacter::OnFire);
+	// Bind raise mirror event
+	PlayerInputComponent->BindAction("RaiseMirror", IE_Pressed, this, &AThoseWhoRemainCharacter::OnRaiseMirror);
+	PlayerInputComponent->BindAction("RaiseMirror", IE_Released, this, &AThoseWhoRemainCharacter::OnLowerMirror);
 
+	// Bind the sprint event
+	PlayerInputComponent->BindAction("Sprint", IE_Pressed, this, &AThoseWhoRemainCharacter::OnSprint);
+	PlayerInputComponent->BindAction("Sprint", IE_Released, this, &AThoseWhoRemainCharacter::OnWalk);
 	// Enable touchscreen input
 	EnableTouchscreenMovement(PlayerInputComponent);
 
@@ -173,6 +185,26 @@ void AThoseWhoRemainCharacter::OnFire()
 			AnimInstance->Montage_Play(FireAnimation, 1.f);*/
 		//}
 	}
+}
+
+void AThoseWhoRemainCharacter::OnRaiseMirror()
+{
+	mirrorMesh->RelativeLocation = FVector(4.0f, 4.305359f, 60.0f);
+}
+
+void AThoseWhoRemainCharacter::OnLowerMirror()
+{
+	mirrorMesh->RelativeLocation = FVector(-85.0f, 4.305359f, 60.0f);
+}
+
+void AThoseWhoRemainCharacter::OnSprint()
+{
+	GetCharacterMovement()->MaxWalkSpeed = 600;
+}
+
+void AThoseWhoRemainCharacter::OnWalk()
+{
+	GetCharacterMovement()->MaxWalkSpeed = 300;
 }
 
 void AThoseWhoRemainCharacter::OnResetVR()

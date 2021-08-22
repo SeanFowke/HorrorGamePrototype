@@ -25,6 +25,12 @@ class AThoseWhoRemainCharacter : public ACharacter
 	UPROPERTY(EditAnywhere, Category = HiddenObject)
 	class UHiddenObjectComponent* hiddenObjectComp;
 
+	UPROPERTY(EditAnywhere, Category = SceneCapture2D)
+	class USceneCaptureComponent2D* sceneCapture;
+
+	UPROPERTY(EditAnywhere, Category = MirrorMesh)
+	class UStaticMeshComponent* mirrorMesh;
+
 	UPROPERTY(VisibleDefaultsOnly, Category = Mesh)
 	class USceneComponent* FP_MuzzleLocation;
 
@@ -87,6 +93,12 @@ protected:
 	
 	/** Fires a projectile. */
 	void OnFire();
+
+	void OnRaiseMirror();
+	void OnLowerMirror();
+
+	void OnSprint();
+	void OnWalk();
 
 	/** Resets HMD orientation and position in VR. */
 	void OnResetVR();
