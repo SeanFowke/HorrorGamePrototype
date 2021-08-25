@@ -32,14 +32,14 @@ AThoseWhoRemainCharacter::AThoseWhoRemainCharacter()
 
 	// Create a CameraComponent	
 	FirstPersonCameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("FirstPersonCamera"));
-	FirstPersonCameraComponent->SetupAttachment(GetCapsuleComponent());
-	FirstPersonCameraComponent->RelativeLocation = FVector(-39.56f, 1.75f, 64.f); // Position the camera
+	FirstPersonCameraComponent->SetupAttachment(GetCapsuleComponent());// Position the camera
+	FirstPersonCameraComponent->SetRelativeLocation(FVector(-39.56f, 1.75f, 64.f));
 	FirstPersonCameraComponent->bUsePawnControlRotation = true;
 
 	// create a hidden object component
 	sceneCapture = CreateDefaultSubobject<USceneCaptureComponent2D>(TEXT("SceneCapture2D"));
 	sceneCapture->SetupAttachment(GetCapsuleComponent());
-	sceneCapture->RelativeLocation = FVector(-39.56f, 1.75f, 64.f);
+	sceneCapture->SetRelativeLocation(FVector(-39.56f, 1.75f, 64.f));
 	
 	mirrorMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MirrorMesh"));
 	mirrorMesh->SetupAttachment(GetCapsuleComponent());
@@ -189,12 +189,12 @@ void AThoseWhoRemainCharacter::OnFire()
 
 void AThoseWhoRemainCharacter::OnRaiseMirror()
 {
-	mirrorMesh->RelativeLocation = FVector(4.0f, 4.305359f, 60.0f);
+	mirrorMesh->SetRelativeLocation(FVector(4.0f, 4.305359f, 60.0f));
 }
 
 void AThoseWhoRemainCharacter::OnLowerMirror()
 {
-	mirrorMesh->RelativeLocation = FVector(-85.0f, 4.305359f, 60.0f);
+	mirrorMesh->SetRelativeLocation(FVector(-85.0f, 4.305359f, 60.0f));
 }
 
 void AThoseWhoRemainCharacter::OnSprint()
