@@ -31,6 +31,9 @@ class AThoseWhoRemainCharacter : public ACharacter
 	UPROPERTY(EditAnywhere, Category = MirrorMesh)
 	class UStaticMeshComponent* mirrorMesh;
 
+	UPROPERTY(EditAnywhere)
+	class UAIPerceptionStimuliSourceComponent* perceptionStimuliSource;
+
 	UPROPERTY(VisibleDefaultsOnly, Category = Mesh)
 	class USceneComponent* FP_MuzzleLocation;
 
@@ -57,8 +60,14 @@ class AThoseWhoRemainCharacter : public ACharacter
 public:
 	AThoseWhoRemainCharacter();
 
+	void SetMonsterRef(class AMonsterV2* monster_);
+
 protected:
 	virtual void BeginPlay();
+	virtual void Tick(float DeltaSeconds);
+
+	bool shouldCheckCamera = false;
+	class AMonsterV2* monster;
 
 public:
 	/** Base turn rate, in deg/sec. Other scaling may affect final turn rate. */

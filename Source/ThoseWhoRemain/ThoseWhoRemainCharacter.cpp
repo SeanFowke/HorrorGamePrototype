@@ -15,6 +15,8 @@
 #include "Components/StaticMeshComponent.h"
 #include "Components/SceneCaptureComponent2D.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Perception/AIPerceptionStimuliSourceComponent.h"
+#include "MonsterV2.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogFPChar, Warning, All);
 
@@ -23,6 +25,7 @@ DEFINE_LOG_CATEGORY_STATIC(LogFPChar, Warning, All);
 
 AThoseWhoRemainCharacter::AThoseWhoRemainCharacter()
 {
+	PrimaryActorTick.bCanEverTick = true;
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(55.f, 96.0f);
 
@@ -43,6 +46,8 @@ AThoseWhoRemainCharacter::AThoseWhoRemainCharacter()
 	
 	mirrorMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MirrorMesh"));
 	mirrorMesh->SetupAttachment(GetCapsuleComponent());
+
+	perceptionStimuliSource = CreateDefaultSubobject<UAIPerceptionStimuliSourceComponent>(TEXT("AiPerceptionStimuliSource"));
 
 	// Create a mesh component that will be used when being viewed from a '1st person' view (when controlling this pawn)
 	/*Mesh1P = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("CharacterMesh1P"));
@@ -96,10 +101,25 @@ AThoseWhoRemainCharacter::AThoseWhoRemainCharacter()
 	//bUsingMotionControllers = true;
 }
 
+void AThoseWhoRemainCharacter::SetMonsterRef(AMonsterV2* monster_)
+{
+	monster = monster_;
+}
+
 void AThoseWhoRemainCharacter::BeginPlay()
 {
 	// Call the base class  
 	Super::BeginPlay();
+}
+
+void AThoseWhoRemainCharacter::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+
+	if (shouldCheckCamera && monster)
+	{
+		monster->CheckIfInCamera();
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -190,11 +210,21 @@ void AThoseWhoRemainCharacter::OnFire()
 void AThoseWhoRemainCharacter::OnRaiseMirror()
 {
 	mirrorMesh->SetRelativeLocation(FVector(4.0f, 4.305359f, 60.0f));
+	shouldCheckCamera = true;
+	if (monster)
+	{
+		monster->RaiseLight();
+	}
 }
 
 void AThoseWhoRemainCharacter::OnLowerMirror()
 {
 	mirrorMesh->SetRelativeLocation(FVector(-85.0f, 4.305359f, 60.0f));
+	shouldCheckCamera = false;
+	if (monster)
+	{
+		monster->DimLight();
+	}
 }
 
 void AThoseWhoRemainCharacter::OnSprint()
