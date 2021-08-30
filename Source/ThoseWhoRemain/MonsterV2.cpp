@@ -26,7 +26,8 @@ void AMonsterV2::BeginPlay()
 	Super::BeginPlay();
 	isVisible = false;
 
-	hiddenComp->Setup(GetMesh(), this);
+	//hiddenComp->Setup(GetMesh(), this);
+
 	AThoseWhoRemainCharacter* character = Cast<AThoseWhoRemainCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 	if (character)
 	{
@@ -39,7 +40,7 @@ void AMonsterV2::CheckIfInCamera()
 {
 
 	APlayerCameraManager* camManager = UGameplayStatics::GetPlayerCameraManager(GetWorld(), 0);
-	if (camManager)
+	if (camManager && player)
 	{
 		// get the direction vector between the camera and the monster and normalize it
 		FVector dir = GetActorLocation() - camManager->GetCameraLocation();
@@ -47,7 +48,7 @@ void AMonsterV2::CheckIfInCamera()
 		// get the camera's forward
 		FVector forward = camManager->GetCameraRotation().Vector();
 
-		// if the dot product between the two is negative it means they are not facing the same way and aren't in view of the camera
+		// if the dot product between the two is negative it means they are not facing the same way and aren't in view of the camera 
 		if (FVector::DotProduct(dir, forward) < 0)
 		{
 			RaiseLight();
@@ -62,6 +63,7 @@ void AMonsterV2::CheckIfInCamera()
 		}
 	}
 
+	isVisible = false;
 
 }
 
@@ -69,7 +71,7 @@ void AMonsterV2::RaiseLight()
 {
 	if (!isVisible)
 	{
-		light->SetIntensity(20000000.0f);
+		light->SetIntensity(1000000.0f);
 	}
 	UE_LOG(LogTemp, Warning, TEXT("Raised Light Intensity"));
 
@@ -96,5 +98,10 @@ void AMonsterV2::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent
 	PlayerInputComponent->BindAction("RaiseMirror", IE_Pressed, this, &AMonsterV2::RaiseLight);
 	PlayerInputComponent->BindAction("RaiseMirror", IE_Released, this, &AMonsterV2::DimLight);
 
+}
+
+void AMonsterV2::SetPlayerRef(AThoseWhoRemainCharacter* character_)
+{
+	player = character_;
 }
 

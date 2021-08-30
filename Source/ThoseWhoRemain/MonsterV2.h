@@ -31,6 +31,11 @@ protected:
 	UPROPERTY(EditAnywhere)
 	class USpotLightComponent* light;
 
+	class AThoseWhoRemainCharacter* player;
+
+	UPROPERTY(EditAnywhere)
+	float distanceToTurnOffLight;
+
 	bool isVisible;
 
 public:	
@@ -39,5 +44,7 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	void SetPlayerRef(class AThoseWhoRemainCharacter* character_);
 
 };

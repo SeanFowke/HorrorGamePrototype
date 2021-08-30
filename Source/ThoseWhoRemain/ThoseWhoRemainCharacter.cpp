@@ -103,7 +103,13 @@ AThoseWhoRemainCharacter::AThoseWhoRemainCharacter()
 
 void AThoseWhoRemainCharacter::SetMonsterRef(AMonsterV2* monster_)
 {
+	// set monster ref
 	monster = monster_;
+	// go and give a ref of the player to the monster
+	if (monster)
+	{
+		monster->SetPlayerRef(this);
+	}
 }
 
 void AThoseWhoRemainCharacter::BeginPlay()
