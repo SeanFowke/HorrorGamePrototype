@@ -7,6 +7,7 @@
 #include "Components/SpotLightComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "ThoseWhoRemainCharacter.h"
+#include "GameFramework/CharacterMovementComponent.h"
 // Sets default values
 AMonsterV2::AMonsterV2()
 {
@@ -33,6 +34,8 @@ void AMonsterV2::BeginPlay()
 	{
 		character->SetMonsterRef(this);
 	}
+
+	state = Idle;
 
 }
 
@@ -83,6 +86,18 @@ void AMonsterV2::DimLight()
 	UE_LOG(LogTemp, Warning, TEXT("Lowered Light Intensity"));
 }
 
+void AMonsterV2::ChangeSpeedToMatchState()
+{
+	if (state == Patrol)
+	{
+		GetCharacterMovement()->MaxWalkSpeed = walkSpeed;
+	}
+	else if (state == Attacking)
+	{
+		GetCharacterMovement()->MaxWalkSpeed = runSpeed;
+	}
+}
+
 // Called every frame
 void AMonsterV2::Tick(float DeltaTime)
 {
@@ -103,5 +118,32 @@ void AMonsterV2::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent
 void AMonsterV2::SetPlayerRef(AThoseWhoRemainCharacter* character_)
 {
 	player = character_;
+}
+
+void AMonsterV2::ChangeState(MonsterStates state_)
+{
+	state = state_;
+
+	ChangeSpeedToMatchState();
+}
+
+float AMonsterV2::GetSpeed()
+{
+	return GetVelocity().Size();
+}
+
+void AMonsterV2::SetMaxRunSpeed(float maxSpeed_)
+{
+	GetCharacterMovement()->MaxWalkSpeed = maxSpeed_;
+}
+
+float AMonsterV2::GetDirection()
+{
+	return GetMesh()->GetAnimInstance()->CalculateDirection(GetVelocity(), GetActorRotation());
+}
+
+MonsterStates AMonsterV2::GetState()
+{
+	return state;
 }
 

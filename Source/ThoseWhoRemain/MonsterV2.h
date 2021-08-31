@@ -6,6 +6,16 @@
 #include "GameFramework/Character.h"
 #include "MonsterV2.generated.h"
 
+UENUM()
+enum MonsterStates
+{
+	Idle,
+	Patrol,
+	Investigating,
+	Attacking
+};
+
+
 UCLASS()
 class THOSEWHOREMAIN_API AMonsterV2 : public ACharacter
 {
@@ -35,8 +45,17 @@ protected:
 
 	UPROPERTY(EditAnywhere)
 	float distanceToTurnOffLight;
+	UPROPERTY(EditAnywhere, Category = Movement)
+	float walkSpeed;
+	UPROPERTY(EditAnywhere, Category = Movement)
+	float runSpeed;
 
 	bool isVisible;
+
+	UPROPERTY(EditAnywhere)
+	TEnumAsByte<MonsterStates> state;
+
+	void ChangeSpeedToMatchState();
 
 public:	
 	// Called every frame
@@ -46,5 +65,16 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	void SetPlayerRef(class AThoseWhoRemainCharacter* character_);
+
+	UFUNCTION(BlueprintCallable)
+	void ChangeState(MonsterStates state_);
+	UFUNCTION(BlueprintCallable)
+	float GetSpeed();
+	UFUNCTION(BlueprintCallable)
+	void SetMaxRunSpeed(float maxSpeed_);
+	UFUNCTION(BlueprintCallable)
+	float GetDirection();
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	MonsterStates GetState();
 
 };
