@@ -70,6 +70,8 @@ public:
 	void ChangeState(MonsterStates state_);
 	UFUNCTION(BlueprintCallable)
 	float GetSpeed();
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	float GetAnimSpeed();
 	UFUNCTION(BlueprintCallable)
 	void SetMaxRunSpeed(float maxSpeed_);
 	UFUNCTION(BlueprintCallable)

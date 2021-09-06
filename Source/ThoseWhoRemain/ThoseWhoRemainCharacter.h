@@ -61,6 +61,7 @@ public:
 	AThoseWhoRemainCharacter();
 
 	void SetMonsterRef(class AMonsterV2* monster_);
+	void SetInteractableObjectRef(class AInteractableObject* object_);
 
 protected:
 	virtual void BeginPlay();
@@ -68,6 +69,7 @@ protected:
 
 	bool shouldCheckCamera = false;
 	class AMonsterV2* monster;
+	class AInteractableObject* objectRef;
 
 public:
 	/** Base turn rate, in deg/sec. Other scaling may affect final turn rate. */
@@ -108,6 +110,8 @@ protected:
 
 	void OnSprint();
 	void OnWalk();
+
+	void OnInteract();
 
 	/** Resets HMD orientation and position in VR. */
 	void OnResetVR();

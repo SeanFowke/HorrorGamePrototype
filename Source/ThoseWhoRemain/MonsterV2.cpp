@@ -74,7 +74,7 @@ void AMonsterV2::RaiseLight()
 {
 	if (!isVisible)
 	{
-		light->SetIntensity(1000000.0f);
+		light->SetIntensity(100000.0f);
 	}
 	UE_LOG(LogTemp, Warning, TEXT("Raised Light Intensity"));
 
@@ -109,10 +109,6 @@ void AMonsterV2::Tick(float DeltaTime)
 void AMonsterV2::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
-	PlayerInputComponent->BindAction("RaiseMirror", IE_Pressed, this, &AMonsterV2::RaiseLight);
-	PlayerInputComponent->BindAction("RaiseMirror", IE_Released, this, &AMonsterV2::DimLight);
-
 }
 
 void AMonsterV2::SetPlayerRef(AThoseWhoRemainCharacter* character_)
@@ -130,6 +126,18 @@ void AMonsterV2::ChangeState(MonsterStates state_)
 float AMonsterV2::GetSpeed()
 {
 	return GetVelocity().Size();
+}
+
+float AMonsterV2::GetAnimSpeed()
+{
+	if (state == Patrol)
+	{
+		return 1.7f;
+	}
+	else
+	{
+		return 1.0f;
+	}
 }
 
 void AMonsterV2::SetMaxRunSpeed(float maxSpeed_)

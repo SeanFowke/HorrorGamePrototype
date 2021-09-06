@@ -17,6 +17,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Perception/AIPerceptionStimuliSourceComponent.h"
 #include "MonsterV2.h"
+#include "InteractableObject.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogFPChar, Warning, All);
 
@@ -112,6 +113,11 @@ void AThoseWhoRemainCharacter::SetMonsterRef(AMonsterV2* monster_)
 	}
 }
 
+void AThoseWhoRemainCharacter::SetInteractableObjectRef(AInteractableObject* object_)
+{
+	objectRef = object_;
+}
+
 void AThoseWhoRemainCharacter::BeginPlay()
 {
 	// Call the base class  
@@ -147,6 +153,8 @@ void AThoseWhoRemainCharacter::SetupPlayerInputComponent(class UInputComponent* 
 	// Bind the sprint event
 	PlayerInputComponent->BindAction("Sprint", IE_Pressed, this, &AThoseWhoRemainCharacter::OnSprint);
 	PlayerInputComponent->BindAction("Sprint", IE_Released, this, &AThoseWhoRemainCharacter::OnWalk);
+
+	PlayerInputComponent->BindAction("Interact", IE_Pressed, this, &AThoseWhoRemainCharacter::OnInteract);
 	// Enable touchscreen input
 	EnableTouchscreenMovement(PlayerInputComponent);
 
@@ -241,6 +249,16 @@ void AThoseWhoRemainCharacter::OnSprint()
 void AThoseWhoRemainCharacter::OnWalk()
 {
 	GetCharacterMovement()->MaxWalkSpeed = 300;
+}
+
+void AThoseWhoRemainCharacter::OnInteract()
+{
+
+	if (objectRef)
+	{
+		objectRef->OnInteract();
+		UE_LOG(LogTemp, Warning, TEXT("Interacted!"));
+	}
 }
 
 void AThoseWhoRemainCharacter::OnResetVR()
