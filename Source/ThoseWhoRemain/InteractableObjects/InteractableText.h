@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "InteractableObject.h"
-#include "Animation/WidgetAnimation.h"
+
 #include "InteractableText.generated.h"
 
 /**
@@ -27,7 +27,7 @@ protected:
 
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	UWidgetAnimation* FadeAway;
+	class UWidgetAnimation* FadeAway;
 
 	UPROPERTY(EditAnywhere)
 	float textTimerDuration;

@@ -4,6 +4,7 @@
 #include "InteractableObjects/InteractableText.h"
 #include "Components/WidgetComponent.h"
 #include "ThoseWhoRemainCharacter.h"
+#include "Animation/WidgetAnimation.h"
 
 
 AInteractableText::AInteractableText()

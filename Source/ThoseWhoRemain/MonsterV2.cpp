@@ -132,7 +132,7 @@ float AMonsterV2::GetAnimSpeed()
 {
 	if (state == Patrol)
 	{
-		return 1.7f;
+		return 1.8f;
 	}
 	else
 	{
