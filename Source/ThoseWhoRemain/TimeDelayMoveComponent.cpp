@@ -25,6 +25,7 @@ void UTimeDelayMoveComponent::BeginPlay()
 
 	GetWorld()->GetTimerManager().SetTimer(timerHandle, this, &UTimeDelayMoveComponent::MoveAfterDelay, delay, false);
 	audioComp->Stop();
+
 	// ...
 	
 }
@@ -42,9 +43,11 @@ void UTimeDelayMoveComponent::MoveAfterDelay()
 
 void UTimeDelayMoveComponent::HandleMovement()
 {
-	if (GetOwner())
+	if (floorToDelete)
 	{
-		FVector currentLoc = GetOwner()->GetActorLocation();
+		floorToDelete->Destroy();
+		shouldMove = false;
+		/*FVector currentLoc = GetOwner()->GetActorLocation();
 		FVector dir = moveLoc->GetActorLocation() - currentLoc;
 		dir.Normalize();
 		GetOwner()->SetActorLocation(currentLoc + (dir * movementSpeed));
@@ -52,7 +55,7 @@ void UTimeDelayMoveComponent::HandleMovement()
 		if (FVector::Dist(moveLoc->GetActorLocation(), currentLoc) <= 5.0f)
 		{
 			shouldMove = false;
-		}
+		}*/
 	}
 }
 

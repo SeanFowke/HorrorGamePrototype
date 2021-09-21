@@ -41,6 +41,9 @@ protected:
 	// timer
 	FTimerHandle timerHandle;
 
+	UPROPERTY(EditAnywhere)
+	AActor* floorToDelete;
+
 public:	
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
