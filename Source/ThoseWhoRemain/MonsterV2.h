@@ -41,6 +41,7 @@ protected:
 	UPROPERTY(EditAnywhere)
 	class USpotLightComponent* light;
 
+	UPROPERTY(BlueprintReadOnly)
 	class AThoseWhoRemainCharacter* player;
 
 	UPROPERTY(EditAnywhere)
