@@ -18,6 +18,7 @@
 #include "Perception/AIPerceptionStimuliSourceComponent.h"
 #include "MonsterV2.h"
 #include "InteractableObject.h"
+#include "Components/WidgetComponent.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogFPChar, Warning, All);
 
@@ -47,6 +48,8 @@ AThoseWhoRemainCharacter::AThoseWhoRemainCharacter()
 	
 	mirrorMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MirrorMesh"));
 	mirrorMesh->SetupAttachment(GetCapsuleComponent());
+
+	widget = CreateDefaultSubobject<UWidgetComponent>(TEXT("WidgetComponent"));
 
 	perceptionStimuliSource = CreateDefaultSubobject<UAIPerceptionStimuliSourceComponent>(TEXT("AiPerceptionStimuliSource"));
 
@@ -122,6 +125,13 @@ void AThoseWhoRemainCharacter::BeginPlay()
 {
 	// Call the base class  
 	Super::BeginPlay();
+
+	if (widget->GetUserWidgetObject() && !widget->GetUserWidgetObject()->IsInViewport())
+	{
+		widget->GetUserWidgetObject()->AddToViewport();
+	}
+
+	stamina = maxStamina;
 }
 
 void AThoseWhoRemainCharacter::Tick(float DeltaSeconds)
@@ -131,6 +141,32 @@ void AThoseWhoRemainCharacter::Tick(float DeltaSeconds)
 	if (shouldCheckCamera && monster)
 	{
 		monster->CheckIfInCamera();
+	}
+
+	
+}
+
+void AThoseWhoRemainCharacter::RemoveStamina()
+{
+	if (stamina > 0 && isSprinting)
+	{
+		stamina -= 1.0f;
+		UE_LOG(LogTemp, Warning, TEXT("Removed Stamina"));
+		GetWorld()->GetTimerManager().SetTimer(sprintTimer, this, &AThoseWhoRemainCharacter::RemoveStamina, 1.0f, false);
+	}
+	else if(stamina <= 0)
+	{
+		OnWalk();
+	}
+}
+
+void AThoseWhoRemainCharacter::AddStamina()
+{
+	if (stamina < maxStamina && !isSprinting)
+	{
+		stamina += 1.0f;
+		UE_LOG(LogTemp, Warning, TEXT("Added Stamina"));
+		GetWorld()->GetTimerManager().SetTimer(sprintTimer, this, &AThoseWhoRemainCharacter::AddStamina, 1.0f, false);
 	}
 }
 
@@ -243,12 +279,23 @@ void AThoseWhoRemainCharacter::OnLowerMirror()
 
 void AThoseWhoRemainCharacter::OnSprint()
 {
-	GetCharacterMovement()->MaxWalkSpeed = 600;
+	
+	if (stamina > 1.0f)
+	{
+		stamina -= 1.0f;
+		GetCharacterMovement()->MaxWalkSpeed = 600;
+		isSprinting = true;
+		UE_LOG(LogTemp, Warning, TEXT("IS SPRINTING"));
+		GetWorld()->GetTimerManager().SetTimer(sprintTimer, this, &AThoseWhoRemainCharacter::RemoveStamina, 1.0f, false);
+	}
 }
 
 void AThoseWhoRemainCharacter::OnWalk()
 {
-	GetCharacterMovement()->MaxWalkSpeed = 300;
+	GetCharacterMovement()->MaxWalkSpeed = 200;
+	isSprinting = false;
+	UE_LOG(LogTemp, Warning, TEXT("IS NOT SPRINTING"));
+	GetWorld()->GetTimerManager().SetTimer(sprintTimer, this, &AThoseWhoRemainCharacter::AddStamina, 2.0f, false);
 }
 
 void AThoseWhoRemainCharacter::OnInteract()

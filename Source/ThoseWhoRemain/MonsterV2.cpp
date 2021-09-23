@@ -27,7 +27,7 @@ void AMonsterV2::BeginPlay()
 	Super::BeginPlay();
 	isVisible = false;
 
-	//hiddenComp->Setup(GetMesh(), this);
+	hiddenComp->Setup(GetMesh(), this);
 
 	AThoseWhoRemainCharacter* character = Cast<AThoseWhoRemainCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 	if (character)
@@ -56,13 +56,13 @@ void AMonsterV2::CheckIfInCamera()
 		{
 			RaiseLight();
 			isVisible = false;
-			UE_LOG(LogTemp, Warning, TEXT("Not visible"));
+			//UE_LOG(LogTemp, Warning, TEXT("Not visible"));
 		}
 		else
 		{
 			DimLight();
 			isVisible = true;
-			UE_LOG(LogTemp, Warning, TEXT("Visible"));
+			//UE_LOG(LogTemp, Warning, TEXT("Visible"));
 		}
 	}
 

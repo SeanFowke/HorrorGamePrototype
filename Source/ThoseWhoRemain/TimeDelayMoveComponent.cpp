@@ -47,10 +47,10 @@ void UTimeDelayMoveComponent::HandleMovement()
 	{
 		floorToDelete->Destroy();
 		shouldMove = false;
-		/*FVector currentLoc = GetOwner()->GetActorLocation();
+		/*FVector currentLoc = floorToDelete->GetActorLocation();
 		FVector dir = moveLoc->GetActorLocation() - currentLoc;
 		dir.Normalize();
-		GetOwner()->SetActorLocation(currentLoc + (dir * movementSpeed));
+		floorToDelete->SetActorLocation(currentLoc + (dir * movementSpeed));
 
 		if (FVector::Dist(moveLoc->GetActorLocation(), currentLoc) <= 5.0f)
 		{

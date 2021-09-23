@@ -31,6 +31,9 @@ class AThoseWhoRemainCharacter : public ACharacter
 	UPROPERTY(EditAnywhere, Category = MirrorMesh)
 	class UStaticMeshComponent* mirrorMesh;
 
+	UPROPERTY(EditAnywhere, Category = UI)
+	class UWidgetComponent* widget;
+
 	UPROPERTY(EditAnywhere)
 	class UAIPerceptionStimuliSourceComponent* perceptionStimuliSource;
 
@@ -67,9 +70,18 @@ protected:
 	virtual void BeginPlay();
 	virtual void Tick(float DeltaSeconds);
 
+	void RemoveStamina();
+	void AddStamina();
+
 	bool shouldCheckCamera = false;
+	bool isSprinting = false;
 	class AMonsterV2* monster;
 	class AInteractableObject* objectRef;
+	FTimerHandle sprintTimer;
+	float stamina;
+
+	UPROPERTY(EditAnywhere)
+	float maxStamina;
 
 public:
 	/** Base turn rate, in deg/sec. Other scaling may affect final turn rate. */
