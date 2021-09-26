@@ -17,8 +17,6 @@ class THOSEWHOREMAIN_API AInteractableText : public AInteractableObject
 	AInteractableText();
 
 protected:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	class UWidgetComponent* textWidget;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FString text;
 

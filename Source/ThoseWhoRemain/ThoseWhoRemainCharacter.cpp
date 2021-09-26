@@ -19,6 +19,7 @@
 #include "MonsterV2.h"
 #include "InteractableObject.h"
 #include "Components/WidgetComponent.h"
+#include "Components/AudioComponent.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogFPChar, Warning, All);
 
@@ -49,9 +50,14 @@ AThoseWhoRemainCharacter::AThoseWhoRemainCharacter()
 	mirrorMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MirrorMesh"));
 	mirrorMesh->SetupAttachment(GetCapsuleComponent());
 
+	audioComp = CreateDefaultSubobject<UAudioComponent>(TEXT("AudioComponent"));
+	audioComp->SetupAttachment(GetCapsuleComponent());
+
 	widget = CreateDefaultSubobject<UWidgetComponent>(TEXT("WidgetComponent"));
 
 	perceptionStimuliSource = CreateDefaultSubobject<UAIPerceptionStimuliSourceComponent>(TEXT("AiPerceptionStimuliSource"));
+
+
 
 	// Create a mesh component that will be used when being viewed from a '1st person' view (when controlling this pawn)
 	/*Mesh1P = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("CharacterMesh1P"));
@@ -132,6 +138,10 @@ void AThoseWhoRemainCharacter::BeginPlay()
 	}
 
 	stamina = maxStamina;
+
+	audioComp->Stop();
+
+	GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &AThoseWhoRemainCharacter::OnOverlap);
 }
 
 void AThoseWhoRemainCharacter::Tick(float DeltaSeconds)
@@ -151,7 +161,7 @@ void AThoseWhoRemainCharacter::RemoveStamina()
 	if (stamina > 0 && isSprinting)
 	{
 		stamina -= 1.0f;
-		UE_LOG(LogTemp, Warning, TEXT("Removed Stamina"));
+		//UE_LOG(LogTemp, Warning, TEXT("Removed Stamina"));
 		GetWorld()->GetTimerManager().SetTimer(sprintTimer, this, &AThoseWhoRemainCharacter::RemoveStamina, 1.0f, false);
 	}
 	else if(stamina <= 0)
@@ -165,8 +175,27 @@ void AThoseWhoRemainCharacter::AddStamina()
 	if (stamina < maxStamina && !isSprinting)
 	{
 		stamina += 1.0f;
-		UE_LOG(LogTemp, Warning, TEXT("Added Stamina"));
-		GetWorld()->GetTimerManager().SetTimer(sprintTimer, this, &AThoseWhoRemainCharacter::AddStamina, 1.0f, false);
+		//UE_LOG(LogTemp, Warning, TEXT("Added Stamina"));
+		GetWorld()->GetTimerManager().SetTimer(sprintTimer, this, &AThoseWhoRemainCharacter::AddStamina, 2.0f, false);
+	}
+}
+
+void AThoseWhoRemainCharacter::PlayFootstepSound()
+{
+	audioComp->Play();
+	//UE_LOG(LogTemp, Warning, TEXT("Played Sound!"));
+}
+
+void AThoseWhoRemainCharacter::OnOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	if (OtherActor != nullptr && OtherActor != this && OtherComp != nullptr)
+	{
+		AMonsterV2* monster = Cast<AMonsterV2>(OtherActor);
+
+		if (monster)
+		{
+			UGameplayStatics::OpenLevel(GetWorld(), "GameMap", false);
+		}
 	}
 }
 
@@ -285,8 +314,12 @@ void AThoseWhoRemainCharacter::OnSprint()
 		stamina -= 1.0f;
 		GetCharacterMovement()->MaxWalkSpeed = 600;
 		isSprinting = true;
-		UE_LOG(LogTemp, Warning, TEXT("IS SPRINTING"));
+		//UE_LOG(LogTemp, Warning, TEXT("IS SPRINTING"));
 		GetWorld()->GetTimerManager().SetTimer(sprintTimer, this, &AThoseWhoRemainCharacter::RemoveStamina, 1.0f, false);
+	}
+	else
+	{
+		audioComp->Stop();
 	}
 }
 
@@ -294,7 +327,7 @@ void AThoseWhoRemainCharacter::OnWalk()
 {
 	GetCharacterMovement()->MaxWalkSpeed = 200;
 	isSprinting = false;
-	UE_LOG(LogTemp, Warning, TEXT("IS NOT SPRINTING"));
+	//UE_LOG(LogTemp, Warning, TEXT("IS NOT SPRINTING"));
 	GetWorld()->GetTimerManager().SetTimer(sprintTimer, this, &AThoseWhoRemainCharacter::AddStamina, 2.0f, false);
 }
 
@@ -382,7 +415,26 @@ void AThoseWhoRemainCharacter::MoveForward(float Value)
 	{
 		// add movement in that direction
 		AddMovementInput(GetActorForwardVector(), Value);
+		//UE_LOG(LogTemp, Warning, TEXT("Moving Forward"));	
 	}
+
+	if ((GetVelocity().X > 2.0f || GetVelocity().X < -2.0f || GetVelocity().Y > 2.0f || GetVelocity().Y < -2.0f) && GetVelocity().Z == 0)
+	{
+		if (!moving)
+		{
+			moving = true;
+			GetWorld()->GetTimerManager().SetTimer(footstepTimer, this, &AThoseWhoRemainCharacter::PlayFootstepSound, footstepDelay, true);
+			//UE_LOG(LogTemp, Warning, TEXT("Played Sound"));
+		}
+	}
+	else
+	{
+		moving = false;
+		GetWorld()->GetTimerManager().ClearTimer(footstepTimer);
+		//UE_LOG(LogTemp, Warning, TEXT("Cleared Timer"));
+	}
+
+	
 }
 
 void AThoseWhoRemainCharacter::MoveRight(float Value)
@@ -391,6 +443,7 @@ void AThoseWhoRemainCharacter::MoveRight(float Value)
 	{
 		// add movement in that direction
 		AddMovementInput(GetActorRightVector(), Value);
+		//UE_LOG(LogTemp, Warning, TEXT("Moving Right"));
 	}
 }
 

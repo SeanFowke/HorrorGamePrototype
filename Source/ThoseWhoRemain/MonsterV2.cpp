@@ -76,14 +76,14 @@ void AMonsterV2::RaiseLight()
 	{
 		light->SetIntensity(100000.0f);
 	}
-	UE_LOG(LogTemp, Warning, TEXT("Raised Light Intensity"));
+	//UE_LOG(LogTemp, Warning, TEXT("Raised Light Intensity"));
 
 }
 
 void AMonsterV2::DimLight()
 {
 	light->SetIntensity(0.0f);
-	UE_LOG(LogTemp, Warning, TEXT("Lowered Light Intensity"));
+	//UE_LOG(LogTemp, Warning, TEXT("Lowered Light Intensity"));
 }
 
 void AMonsterV2::ChangeSpeedToMatchState()

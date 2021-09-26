@@ -9,7 +9,6 @@
 
 AInteractableText::AInteractableText()
 {
-	textWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("TextWidgetComponent"));
 
 }
 
@@ -21,9 +20,9 @@ void AInteractableText::OnInteract()
 		initialWidget->GetUserWidgetObject()->RemoveFromViewport();
 	}
 	// replace it with the text widget
-	if (textWidget && textWidget->GetUserWidgetObject() && !textWidget->GetUserWidgetObject()->IsInViewport())
+	if (secondWidget && secondWidget->GetUserWidgetObject() && !secondWidget->GetUserWidgetObject()->IsInViewport())
 	{
-		textWidget->GetUserWidgetObject()->AddToViewport();
+		secondWidget->GetUserWidgetObject()->AddToViewport();
 		GetWorld()->GetTimerManager().SetTimer(textTimerHandle, this, &AInteractableText::MakeTextDisapear, textTimerDuration, false);
 	}
 }
@@ -39,9 +38,9 @@ void AInteractableText::MakeTextDisapear()
 		UE_LOG(LogTemp, Warning, TEXT("FadeAway is NULL"));
 	}
 
-	if (textWidget && textWidget->GetUserWidgetObject())
+	if (secondWidget && secondWidget->GetUserWidgetObject())
 	{
-		textWidget->GetUserWidgetObject()->PlayAnimation(FadeAway);
+		secondWidget->GetUserWidgetObject()->PlayAnimation(FadeAway);
 		GetWorld()->GetTimerManager().SetTimer(fadeTimerHandle, this, &AInteractableText::RemoveTextWidget, fadeTimerDuration, false);
 	}
 	
@@ -49,8 +48,8 @@ void AInteractableText::MakeTextDisapear()
 
 void AInteractableText::RemoveTextWidget()
 {
-	if (textWidget && textWidget->GetUserWidgetObject() && textWidget->GetUserWidgetObject()->IsInViewport())
+	if (secondWidget && secondWidget->GetUserWidgetObject() && secondWidget->GetUserWidgetObject()->IsInViewport())
 	{
-		textWidget->GetUserWidgetObject()->RemoveFromViewport();
+		secondWidget->GetUserWidgetObject()->RemoveFromViewport();
 	}
 }

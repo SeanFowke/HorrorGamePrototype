@@ -26,6 +26,7 @@ AInteractableObject::AInteractableObject()
 	box->SetCollisionProfileName("OverlapAllDynamic");
 	
 	initialWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("WidgetComponent"));
+	secondWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("WidgetComponent2"));
 
 
 }
@@ -53,7 +54,7 @@ void AInteractableObject::OnOverlapWithPlayer(UPrimitiveComponent* OverlappedCom
 			//UE_LOG(LogTemp, Warning, TEXT("Set Interact Ref"));
 			player->SetInteractableObjectRef(this);
 
-			if (initialWidget && initialWidget->GetUserWidgetObject() &&!initialWidget->GetUserWidgetObject()->IsInViewport())
+			if (initialWidget && initialWidget->GetUserWidgetObject() &&!initialWidget->GetUserWidgetObject()->IsInViewport() && !secondWidget->GetUserWidgetObject()->IsInViewport())
 			{
 				initialWidget->GetUserWidgetObject()->AddToViewport();
 			}

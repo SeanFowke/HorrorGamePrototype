@@ -31,8 +31,10 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "BoxCollision")
 	class UBoxComponent* box;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UWidgetComponent* initialWidget;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class UWidgetComponent* secondWidget;
 
 	UPROPERTY(EditAnywhere)
 	UStaticMeshComponent* mesh;

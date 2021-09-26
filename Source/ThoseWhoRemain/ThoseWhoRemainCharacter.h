@@ -34,6 +34,9 @@ class AThoseWhoRemainCharacter : public ACharacter
 	UPROPERTY(EditAnywhere, Category = UI)
 	class UWidgetComponent* widget;
 
+	UPROPERTY(EditAnywhere, Category = Sound)
+	class UAudioComponent* audioComp;
+
 	UPROPERTY(EditAnywhere)
 	class UAIPerceptionStimuliSourceComponent* perceptionStimuliSource;
 
@@ -73,8 +76,15 @@ protected:
 	void RemoveStamina();
 	void AddStamina();
 
+	void PlayFootstepSound();
+
+	UFUNCTION()
+	void OnOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
 	bool shouldCheckCamera = false;
 	bool isSprinting = false;
+	bool moving = false;
+
 	class AMonsterV2* monster;
 	class AInteractableObject* objectRef;
 	FTimerHandle sprintTimer;
@@ -82,6 +92,11 @@ protected:
 
 	UPROPERTY(EditAnywhere)
 	float maxStamina;
+
+	FTimerHandle footstepTimer;
+	UPROPERTY(EditAnywhere)
+	float footstepDelay;
+
 
 public:
 	/** Base turn rate, in deg/sec. Other scaling may affect final turn rate. */

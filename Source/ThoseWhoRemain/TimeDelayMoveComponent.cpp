@@ -11,9 +11,6 @@ UTimeDelayMoveComponent::UTimeDelayMoveComponent()
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
 
-
-	audioComp = CreateDefaultSubobject<UAudioComponent>(TEXT("AudioComponent"));
-
 	// ...
 }
 
@@ -24,8 +21,12 @@ void UTimeDelayMoveComponent::BeginPlay()
 	Super::BeginPlay();
 
 	GetWorld()->GetTimerManager().SetTimer(timerHandle, this, &UTimeDelayMoveComponent::MoveAfterDelay, delay, false);
-	audioComp->Stop();
 
+	audioComp = GetOwner()->FindComponentByClass<UAudioComponent>();
+	if (audioComp)
+	{
+		audioComp->Stop();
+	}
 	// ...
 	
 }
