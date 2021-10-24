@@ -138,17 +138,24 @@ void AThoseWhoRemainCharacter::BeginPlay()
 	}
 
 	stamina = maxStamina;
+	mirrorHoldAmount = mirrorHoldAmountMax;
 
 	audioComp->Stop();
 
 	GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &AThoseWhoRemainCharacter::OnOverlap);
+
+	if (!widget->GetUserWidgetObject()->IsInViewport())
+	{
+		widget->GetUserWidgetObject()->AddToViewport();
+	}
+
 }
 
 void AThoseWhoRemainCharacter::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 
-	if (shouldCheckCamera && monster)
+	if (holdingMirror && monster)
 	{
 		monster->CheckIfInCamera();
 	}
@@ -180,10 +187,43 @@ void AThoseWhoRemainCharacter::AddStamina()
 	}
 }
 
+void AThoseWhoRemainCharacter::AddMirrorTime()
+{
+	if (mirrorHoldAmount < mirrorHoldAmountMax && !holdingMirror)
+	{
+		mirrorHoldAmount += 1.0f;
+		GetWorld()->GetTimerManager().SetTimer(mirrorTimer, this, &AThoseWhoRemainCharacter::AddMirrorTime, 2.0f, false);
+	}
+}
+
+void AThoseWhoRemainCharacter::RemoveMirrorTime()
+{
+	if (mirrorHoldAmount > 0 && holdingMirror)
+	{
+		mirrorHoldAmount -= 1.0f;
+		//UE_LOG(LogTemp, Warning, TEXT("Removed Stamina"));
+		GetWorld()->GetTimerManager().SetTimer(mirrorTimer, this, &AThoseWhoRemainCharacter::RemoveMirrorTime, 1.0f, false);
+	}
+	else if (mirrorHoldAmount <= 0)
+	{
+		OnLowerMirror();
+	}
+}
+
 void AThoseWhoRemainCharacter::PlayFootstepSound()
 {
 	audioComp->Play();
 	//UE_LOG(LogTemp, Warning, TEXT("Played Sound!"));
+}
+
+float AThoseWhoRemainCharacter::GetStaminaFillAmount()
+{
+	return stamina / maxStamina;
+}
+
+float AThoseWhoRemainCharacter::GetMirrorFillAmount()
+{
+	return mirrorHoldAmount / mirrorHoldAmountMax;
 }
 
 void AThoseWhoRemainCharacter::OnOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -288,18 +328,27 @@ void AThoseWhoRemainCharacter::OnFire()
 
 void AThoseWhoRemainCharacter::OnRaiseMirror()
 {
-	mirrorMesh->SetRelativeLocation(FVector(4.0f, 4.305359f, 60.0f));
-	shouldCheckCamera = true;
-	if (monster)
+	if (mirrorHoldAmount > 1)
 	{
-		monster->RaiseLight();
+		mirrorHoldAmount -= 1.0f;
+		GetWorld()->GetTimerManager().SetTimer(mirrorTimer, this, &AThoseWhoRemainCharacter::RemoveMirrorTime, 1.0f, false);
+		mirrorMesh->SetRelativeLocation(FVector(4.0f, 4.305359f, 60.0f));
+		mirrorMesh->SetVisibility(true);
+		holdingMirror = true;
+		if (monster)
+		{
+			monster->RaiseLight();
+		}
 	}
 }
 
 void AThoseWhoRemainCharacter::OnLowerMirror()
 {
 	mirrorMesh->SetRelativeLocation(FVector(-85.0f, 4.305359f, 60.0f));
-	shouldCheckCamera = false;
+	mirrorMesh->SetVisibility(false);
+	GetWorld()->GetTimerManager().SetTimer(mirrorTimer, this, &AThoseWhoRemainCharacter::AddMirrorTime, 2.0f, false);
+
+	holdingMirror = false;
 	if (monster)
 	{
 		monster->DimLight();

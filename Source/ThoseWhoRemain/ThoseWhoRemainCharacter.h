@@ -31,8 +31,7 @@ class AThoseWhoRemainCharacter : public ACharacter
 	UPROPERTY(EditAnywhere, Category = MirrorMesh)
 	class UStaticMeshComponent* mirrorMesh;
 
-	UPROPERTY(EditAnywhere, Category = UI)
-	class UWidgetComponent* widget;
+
 
 	UPROPERTY(EditAnywhere, Category = Sound)
 	class UAudioComponent* audioComp;
@@ -70,18 +69,30 @@ public:
 	void SetInteractableObjectRef(class AInteractableObject* object_);
 
 protected:
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	class UWidgetComponent* widget;
+
 	virtual void BeginPlay();
 	virtual void Tick(float DeltaSeconds);
 
 	void RemoveStamina();
 	void AddStamina();
 
+	void AddMirrorTime();
+	void RemoveMirrorTime();
+
 	void PlayFootstepSound();
+
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	float GetStaminaFillAmount();
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	float GetMirrorFillAmount();
 
 	UFUNCTION()
 	void OnOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
-	bool shouldCheckCamera = false;
+	bool holdingMirror = false;
 	bool isSprinting = false;
 	bool moving = false;
 
@@ -92,6 +103,12 @@ protected:
 
 	UPROPERTY(EditAnywhere)
 	float maxStamina;
+
+	FTimerHandle mirrorTimer;
+	float mirrorHoldAmount;
+
+	UPROPERTY(EditAnywhere)
+		float mirrorHoldAmountMax;
 
 	FTimerHandle footstepTimer;
 	UPROPERTY(EditAnywhere)
